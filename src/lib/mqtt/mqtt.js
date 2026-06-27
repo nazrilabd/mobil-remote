@@ -6,34 +6,34 @@ import {
     esp32Status, 
     batteryLevel 
 } from '../stores/mqttStore.js';
-import { 
-    PUBLIC_MQTT_BROKER_URL, 
-    PUBLIC_MQTT_USERNAME, 
-    PUBLIC_MQTT_PASSWORD 
-} from '$env/static/public';
+// Menggunakan dynamic env untuk akses yang lebih fleksibel
+import { env } from '$env/dynamic/public';
 
 let client = null;
 
 export const initMqtt = () => {
-    if (client) return; // Mencegah multiple connection
+    if (client) return;
 
     mqttStatusText.set('Connecting...');
 
+    // Mengambil nilai dari env dengan cara ini
+    const brokerUrl = env.PUBLIC_MQTT_BROKER_URL;
+    const username = env.PUBLIC_MQTT_USERNAME;
+    const password = env.PUBLIC_MQTT_PASSWORD;
+
     const options = {
-        username: PUBLIC_MQTT_USERNAME,
-        password: PUBLIC_MQTT_PASSWORD,
+        username: username,
+        password: password,
         reconnectPeriod: 3000,
         clean: true,
-        protocol: 'wss' // Wajib WSS untuk web browser
+        protocol: 'wss' 
     };
 
-    client = mqtt.connect(PUBLIC_MQTT_BROKER_URL, options);
+    client = mqtt.connect(brokerUrl, options);
 
     client.on('connect', () => {
         mqttConnected.set(true);
         mqttStatusText.set('Connected');
-        
-        // Subscribe ke topic telemetri
         client.subscribe([TOPICS.BATTERY, TOPICS.STATUS]);
     });
 
