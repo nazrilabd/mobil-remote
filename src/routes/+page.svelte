@@ -1,54 +1,54 @@
 <script>
     import { onMount } from 'svelte';
     import { initMqtt } from '$lib/mqtt/mqtt';
+    // Import store agar bisa menampilkan status real-time
+    import { mqttStatusText, batteryLevel, esp32Status } from '../lib/stores/mqttStore';
     
-    import Navbar from '../components/Navbar.svelte';
-    import StatusCard from '../components/StatusCard.svelte';
-    import ConnectionCard from '../components/ConnectionCard.svelte';
-    import BatteryCard from '../components/BatteryCard.svelte';
+    import Controller from '../components/Controller.svelte';
     import SpeedSlider from '../components/SpeedSlider.svelte';
     import ClawSlider from '../components/ClawSlider.svelte';
-    import Controller from '../components/Controller.svelte';
+    import CameraView from '../components/CameraView.svelte';
 
     onMount(() => {
-        // Hanya panggil initMqtt di browser (menghindari error SSR Vercel)
         initMqtt();
     });
 </script>
 
-<svelte:head>
-    <title>IoT Car Dashboard</title>
-</svelte:head>
+<!-- Kamera sebagai Background Full Screen -->
+<div class="fixed inset-0 z-0">
+    <CameraView />
+</div>
 
-<div class="min-h-screen flex flex-col bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800 via-slate-900 to-black">
-    <Navbar />
+<!-- HUD Layer -->
+<div class="fixed inset-0 z-10 p-4 flex flex-col justify-between pointer-events-none">
+    
+    <!-- Top HUD: Status Bar -->
+    <header class="flex justify-between items-center pointer-events-auto">
+        <!-- Status MQTT & ESP32 -->
+        <div class="flex gap-2">
+            <div class="bg-black/50 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-700 text-xs text-slate-200">
+                MQTT: <span class="text-blue-400 font-bold">{$mqttStatusText}</span>
+            </div>
+            <div class="bg-black/50 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-700 text-xs text-slate-200">
+                ESP32: <span class="text-green-400 font-bold">{$esp32Status}</span>
+            </div>
+        </div>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <!-- Baterai -->
+        <div class="bg-black/50 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-700 text-xs text-slate-200">
+            BATT: <span class="text-yellow-400 font-bold">{$batteryLevel}%</span>
+        </div>
+    </header>
+
+    <!-- Bottom HUD: Controller & Parameters -->
+    <div class="flex justify-between items-end pointer-events-auto">
+        <div class="scale-90 origin-bottom-left">
+            <Controller />
+        </div>
         
-        <!-- Row 1: Status Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <StatusCard />
-            <ConnectionCard />
-            <BatteryCard />
+        <div class="bg-black/40 backdrop-blur-md p-3 rounded-xl border border-slate-700 w-48 scale-90 origin-bottom-right">
+            <SpeedSlider />
+            <ClawSlider />
         </div>
-
-        <!-- Row 2: Controllers -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-            
-            <!-- Direction -->
-            <div class="flex flex-col gap-2">
-                <h2 class="text-slate-400 font-semibold uppercase tracking-wider text-sm mb-2 ml-1">Direction Control</h2>
-                <Controller />
-            </div>
-
-            <!-- Parameters -->
-            <div class="flex flex-col gap-4">
-                <h2 class="text-slate-400 font-semibold uppercase tracking-wider text-sm mb-1 ml-1">Parameters</h2>
-                <SpeedSlider />
-                <ClawSlider />
-            </div>
-
-        </div>
-
-    </main>
+    </div>
 </div>
