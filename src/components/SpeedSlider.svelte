@@ -8,16 +8,14 @@
     };
 </script>
 
-<div class="bg-slate-800/60 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6 shadow-lg shadow-blue-900/10">
-    <div class="flex justify-between items-center mb-4">
-        <h3 class="text-slate-300 font-semibold">Speed Control</h3>
-        <span class="bg-slate-900 text-blue-400 font-mono px-3 py-1 rounded-lg border border-slate-700">
-            {$carSpeed}
-        </span>
+<div>
+    <div class="flex justify-between items-center mb-2">
+        <h3 class="text-[10px] md:text-xs font-mono uppercase tracking-widest text-slate-400">Speed</h3>
+        <span class="text-cyan-400 font-mono text-xs bg-black/40 px-2 py-0.5 rounded border border-cyan-500/20">{$carSpeed}</span>
     </div>
-    <div class="flex items-center gap-4">
-        <span class="text-slate-500 text-sm font-medium">0</span>
-        <input type="range" min="0" max="255" bind:value={$carSpeed} oninput={handleSpeedChange} class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500" />
-        <span class="text-slate-500 text-sm font-medium">255</span>
-    </div>
+    <input
+        type="range" min="0" max="255"
+        bind:value={$carSpeed} oninput={handleSpeedChange}
+        class="w-full h-1.5 bg-slate-700/60 rounded-full appearance-none cursor-pointer accent-cyan-400"
+    />
 </div>
